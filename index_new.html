@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>카카오 T 고객센터 직무테스트</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #1a2332;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffb800;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .header .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+    
+    .timer-box {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #ffb800;
+      color: #1a2332;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(255, 184, 0, 0.4);
+      display: none;
+    }
+    
+    .timer-box.active {
+      display: block;
+    }
+    
+    .timer-box.warning {
+      background: #ff4757;
+      color: white;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .content {
+      padding: 40px;
+    }
+    
+    /* 로그인 화면 */
+    .info-card {
+      background: #fffbf0;
+      border: 2px solid #ffb800;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .info-card h3 {
+      color: #1a2332;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    .info-card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .info-card li {
+      padding: 6px 0;
+      color: #555;
+      font-size: 14px;
+    }
+    
+    .info-card li::before {
+      content: '✓ ';
+      color: #ffb800;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1a2332;
+      font-size: 15px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #ffb800;
+      box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.1);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ffb800 0%, #ffa000 100%);
+      color: #1a2332;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 184, 0, 0.4);
+    }
+    
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    /* 퀴즈 화면 */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffb800 0%, #ffa000 100%);
+      transition: width 0.3s;
+    }
+    
+    .question-box {
+      background: #f8f9fa;
+      border-left: 5px solid #1a2332;
+      padding: 25px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+    }
+    
+    .question-number {
+      color: #ffb800;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 12px;
+      display: inline-block;
+      background: #1a2332;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+    
+    .question-text {
+      font-size: 17px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      color: #1a2332;
+      font-weight: 500;
+    }
+    
+    .choices {
+      margin-top: 15px;
+    }
+    
+    .choice-item {
+      background: white;
+      padding: 15px 20px;
+      margin-bottom: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    
+    .choice-item:hover {
+      border-color: #ffb800;
+      background: #fffbf0;
+      transform: translateX(5px);
+    }
+    
+    .choice-item.selected {
+      border-color: #ffb800;
+      background: #fffbf0;
+    }
+    
+    .choice-item input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 15px;
+      cursor: pointer;
+      accent-color: #ffb800;
+    }
+    
+    .choice-item label {
+      flex: 1;
+      cursor: pointer;
+      font-size: 15px;
+      color: #333;
+    }
+    
+    .text-answer {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      min-height: 120px;
+      resize: vertical;
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .text-answer:focus {
+      outline: none;
+      border-color: #ffb800;
+      box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.1);
+    }
+    
+    /* 결과 화면 */
+    .result-box {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .score-circle {
+      width: 200px;
+      height: 200px;
+      margin: 30px auto;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 10px 30px rgba(26, 35, 50, 0.3);
+      border: 8px solid #ffb800;
+    }
+    
+    .score-circle .score {
+      font-size: 48px;
+      font-weight: bold;
+      color: #ffb800;
+    }
+    
+    .score-circle .label {
+      font-size: 16px;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+    
+    .result-details {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 30px;
+      text-align: left;
+      border: 2px solid #1a2332;
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 15px;
+    }
+    
+    .result-row:last-child {
+      border-bottom: none;
+    }
+    
+    .result-row strong {
+      color: #1a2332;
+    }
+    
+    /* 로딩 화면 */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ffb800;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 18px;
+      color: #1a2332;
+      margin-bottom: 10px;
+    }
+    
+    .loading-subtext {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* 에러 메시지 */
+    .error-message {
+      background: #ffe5e5;
+      color: #c33;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-left: 4px solid #c33;
+      font-size: 15px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    /* 화면 전환 */
+    .screen {
+      display: none;
+    }
+    
+    .screen.active {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* 반응형 */
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .header {
+        padding: 30px 20px;
+      }
+      
+      .timer-box {
+        position: static;
+        margin-top: 20px;
+        display: inline-block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 헤더 -->
+    <div class="header">
+      <div class="logo">카카오 T</div>
+      <h1>고객센터 직무테스트</h1>
+      <div class="subtitle">AI 기반 정책 학습 평가 시스템</div>
+      <div id="timerDisplay" class="timer-box">
+        ⏰ <span id="timer">05:00</span>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- 1. 로그인 화면 -->
+      <div id="loginScreen" class="screen active">
+        <div class="info-card">
+          <h3>📋 시험 안내</h3>
+          <ul>
+            <li>총 10문제 (객관식 8문제, 주관식 2문제)</li>
+            <li>제한 시간: 5분</li>
+            <li>종료 1분 전 알림</li>
+            <li>AI가 선택한 서비스 정책을 학습하여 문제 생성</li>
+            <li>시간 초과 시 자동 제출 및 부분 채점</li>
+          </ul>
+        </div>
+        
+        <h2 style="margin-bottom: 30px; color: #1a2332;">응시자 정보 입력</h2>
+        
+        <div id="loginError" class="error-message"></div>
+        
+        <div class="form-group">
+          <label>ID (영문이름) *</label>
+          <input type="text" id="userId" placeholder="예: honggildong" required>
+        </div>
+        
+        <div class="form-group">
+          <label>이름 *</label>
+          <input type="text" id="userName" placeholder="홍길동" required>
+        </div>
+        
+        <div class="form-group">
+          <label>센터 *</label>
+          <select id="center" required>
+            <option value="">선택하세요</option>
+            <option value="용산">용산</option>
+            <option value="광주">광주</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>서비스 선택 *</label>
+          <select id="service" required>
+            <option value="">로딩 중...</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>역할 *</label>
+          <select id="role" required>
+            <option value="">선택하세요</option>
+            <option value="신입상담사">신입상담사 (초급)</option>
+            <option value="상담사">상담사 (중급)</option>
+            <option value="경력상담사">경력상담사 (중급)</option>
+            <option value="관리자">관리자 (고급)</option>
+            <option value="팀장">팀장 (고급)</option>
+          </select>
+        </div>
+        
+        <button class="btn" onclick="startExam()">시험 시작</button>
+      </div>
+      
+      <!-- 2. 로딩 화면 -->
+      <div id="loadingScreen" class="screen loading">
+        <div class="spinner"></div>
+        <div class="loading-text">🤖 AI가 정책을 분석하고 문제를 생성하고 있습니다...</div>
+        <div class="loading-subtext">잠시만 기다려주세요 (약 30초 소요)</div>
+      </div>
+      
+      <!-- 3. 퀴즈 화면 -->
+      <div id="quizScreen" class="screen">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <div id="questionsContainer"></div>
+        
+        <button class="btn" onclick="submitExam()">시험 제출</button>
+      </div>
+      
+      <!-- 4. 결과 화면 -->
+      <div id="resultScreen" class="screen">
+        <div class="result-box">
+          <h2 style="color: #1a2332; margin-bottom: 20px;">✅ 시험 완료!</h2>
+          
+          <div class="score-circle">
+            <div class="score"><span id="resultScore">0</span>/<span id="resultTotal">10</span></div>
+            <div class="label">총 10문제</div>
+          </div>
+          
+          <h3 id="resultMessage" style="margin: 20px 0; color: #1a2332; font-size: 22px;">💪 다음에 더 잘할 수 있습니다!</h3>
+          
+          <div class="result-details">
+            <div class="result-row">
+              <span><strong>응시자</strong></span>
+              <span id="resultName"></span>
+            </div>
+            <div class="result-row">
+              <span><strong>ID</strong></span>
+              <span id="resultId"></span>
+            </div>
+            <div class="result-row">
+              <span><strong>센터</strong></span>
+              <span id="resultCenter"></span>
+            </div>
+            <div class="result-row">
+              <span><strong>서비스</strong></span>
+              <span id="resultService"></span>
+            </div>
+            <div class="result-row">
+              <span><strong>역할</strong></span>
+              <span id="resultRole"></span>
+            </div>
+            <div class="result-row">
+              <span><strong>정답 수</strong></span>
+              <span><span id="resultCorrect">0</span>개</span>
+            </div>
+            <div class="result-row">
+              <span><strong>정답률</strong></span>
+              <span><span id="resultPercentage">0</span>%</span>
+            </div>
+            <div class="result-row">
+              <span><strong>소요 시간</strong></span>
+              <span id="resultTime"></span>
+            </div>
+          </div>
+          
+          <p style="margin-top: 30px; color: #666; font-size: 14px;">
+            수고하셨습니다! 결과는 자동으로 저장되었습니다.<br>
+            상세한 해설은 담당자에게 문의해주세요.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 전역 변수
+    // ==========================================
+    let examInfo = null;
+    let questions = [];
+    let userAnswers = [];
+    let startTime = null;
+    let timerInterval = null;
+    
+    const TIME_LIMIT = 300; // 5분 (초 단위)
+    const WARNING_TIME = 60; // 1분 전 알림
+    
+    // ==========================================
+    // 페이지 로드 시 서비스 목록 가져오기
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const response = await fetch('/api/services');
+        const data = await response.json();
+        
+        if (data.success && data.services) {
+          const serviceSelect = document.getElementById('service');
+          serviceSelect.innerHTML = '<option value="">선택하세요</option>';
+          
+          data.services.forEach(service => {
+            const option = document.createElement('option');
+            option.value = service;
+            option.textContent = service;
+            serviceSelect.appendChild(option);
+          });
+        } else {
+          throw new Error('서비스 목록을 불러올 수 없습니다');
+        }
+      } catch (error) {
+        console.error('서비스 로딩 실패:', error);
+        showError('서비스 목록을 불러올 수 없습니다. 서버를 확인해주세요.');
+      }
+    });
+    
+    // ==========================================
+    // 화면 전환 함수
+    // ==========================================
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
+    }
+    
+    function showError(message) {
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+    }
+    
+    function hideError() {
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.classList.remove('show');
+    }
+    
+    // ==========================================
+    // 시험 시작
+    // ==========================================
+    async function startExam() {
+      const userId = document.getElementById('userId').value.trim();
+      const userName = document.getElementById('userName').value.trim();
+      const center = document.getElementById('center').value;
+      const service = document.getElementById('service').value;
+      const role = document.getElementById('role').value;
+      
+      // 유효성 검사
+      if (!userId || !userName || !center || !service || !role) {
+        showError('모든 항목을 입력해주세요.');
+        return;
+      }
+      
+      hideError();
+      
+      examInfo = { userId, userName, center, service, role };
+      
+      // 로딩 화면 표시
+      showScreen('loadingScreen');
+      
+      try {
+        // 백엔드에 퀴즈 생성 요청
+        const response = await fetch('/generate-quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            service: service,
+            role: role,
+            numQuestions: 10
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          questions = data.questions;
+          userAnswers = new Array(questions.length).fill(null);
+          
+          // 퀴즈 화면으로 전환
+          showScreen('quizScreen');
+          displayQuestions();
+          startTimer();
+        } else {
+          throw new Error(data.error || '퀴즈 생성 실패');
+        }
+      } catch (error) {
+        alert('❌ 퀴즈 생성 중 오류가 발생했습니다: ' + error.message);
+        showScreen('loginScreen');
+      }
+    }
+    
+    // ==========================================
+    // 문제 표시
+    // ==========================================
+    function displayQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+      
+      questions.forEach((q, index) => {
+        const qBox = document.createElement('div');
+        qBox.className = 'question-box';
+        
+        const questionType = q.type || (index < 8 ? '객관식' : '주관식');
+        
+        let html = `
+          <div class="question-number">문제 ${index + 1} - ${questionType}</div>
+          <div class="question-text">${q.question}</div>
+        `;
+        
+        if (questionType === '객관식') {
+          html += '<div class="choices">';
+          q.options.forEach((choice, i) => {
+            html += `
+              <div class="choice-item" onclick="selectChoice(${index}, ${i})">
+                <input type="radio" name="q${index}" value="${i}" id="q${index}_${i}">
+                <label for="q${index}_${i}">${choice}</label>
+              </div>
+            `;
+          });
+          html += '</div>';
+        } else {
+          html += `
+            <textarea class="text-answer" id="answer_${index}" 
+              placeholder="답변을 입력하세요" 
+              oninput="updateProgress()"></textarea>
+          `;
+        }
+        
+        qBox.innerHTML = html;
+        container.appendChild(qBox);
+      });
+      
+      updateProgress();
+    }
+    
+    function selectChoice(questionIndex, choiceIndex) {
+      userAnswers[questionIndex] = choiceIndex;
+      
+      // 선택된 항목 시각적 표시
+      const choices = document.querySelectorAll(`[name="q${questionIndex}"]`);
+      choices.forEach((radio, i) => {
+        radio.parentElement.classList.toggle('selected', i === choiceIndex);
+      });
+      
+      document.getElementById(`q${questionIndex}_${choiceIndex}`).checked = true;
+      updateProgress();
+    }
+    
+    function updateProgress() {
+      let answered = 0;
+      
+      questions.forEach((q, i) => {
+        const questionType = q.type || (i < 8 ? '객관식' : '주관식');
+        
+        if (questionType === '객관식') {
+          if (userAnswers[i] !== null) answered++;
+        } else {
+          const textarea = document.getElementById(`answer_${i}`);
+          if (textarea && textarea.value.trim()) {
+            userAnswers[i] = textarea.value.trim();
+            answered++;
+          }
+        }
+      });
+      
+      const percentage = (answered / questions.length) * 100;
+      document.getElementById('progressFill').style.width = percentage + '%';
+    }
+    
+    // ==========================================
+    // 타이머
+    // ==========================================
+    function startTimer() {
+      startTime = new Date();
+      document.getElementById('timerDisplay').classList.add('active');
+      
+      let secondsLeft = TIME_LIMIT;
+      let warningShown = false;
+      
+      function updateTimerDisplay() {
+        const mins = Math.floor(secondsLeft / 60);
+        const secs = secondsLeft % 60;
+        const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        document.getElementById('timer').textContent = display;
+        
+        // 1분 전 알림
+        if (secondsLeft === WARNING_TIME && !warningShown) {
+          document.getElementById('timerDisplay').classList.add('warning');
+          alert('⚠️ 시험 종료 1분 전입니다!');
+          warningShown = true;
+        }
+        
+        // 시간 초과
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          alert('⏰ 시험 시간이 종료되었습니다. 자동으로 제출됩니다.');
+          autoSubmitExam();
+        }
+        
+        secondsLeft--;
+      }
+      
+      updateTimerDisplay();
+      timerInterval = setInterval(updateTimerDisplay, 1000);
+    }
+    
+    // ==========================================
+    // 시험 제출
+    // ==========================================
+    async function submitExam() {
+      if (!confirm('정말 제출하시겠습니까?\n제출 후에는 수정이 불가능합니다.')) {
+        return;
+      }
+      
+      await processSubmission();
+    }
+    
+    async function autoSubmitExam() {
+      await processSubmission(true);
+    }
+    
+    async function processSubmission(isAutoSubmit = false) {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+      
+      // 답안 수집
+      updateProgress(); // 주관식 답안 최종 수집
+      
+      const endTime = new Date();
+      const timeSpent = Math.round((endTime - startTime) / 1000); // 초 단위
+      
+      // 채점 요청
+      try {
+        const response = await fetch('/submit-exam', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: examInfo.userId,
+            userName: examInfo.userName,
+            center: examInfo.center,
+            service: examInfo.service,
+            role: examInfo.role,
+            startTime: startTime.toISOString(),
+            endTime: endTime.toISOString(),
+            timeSpent: timeSpent,
+            questions: questions,
+            answers: userAnswers,
+            isAutoSubmit: isAutoSubmit
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showResult(result, timeSpent);
+        } else {
+          throw new Error(result.error || '제출 실패');
+        }
+      } catch (error) {
+        alert('❌ 제출 중 오류가 발생했습니다: ' + error.message);
+      }
+    }
+    
+    // ==========================================
+    // 결과 표시
+    // ==========================================
+    function showResult(result, timeSpent) {
+      showScreen('resultScreen');
+      document.getElementById('timerDisplay').classList.remove('active');
+      
+      const score = result.correctCount;
+      const total = result.total;
+      const percentage = result.percentage;
+      
+      document.getElementById('resultScore').textContent = score;
+      document.getElementById('resultTotal').textContent = total;
+      document.getElementById('resultPercentage').textContent = percentage;
+      document.getElementById('resultName').textContent = examInfo.userName;
+      document.getElementById('resultId').textContent = examInfo.userId;
+      document.getElementById('resultCenter').textContent = examInfo.center;
+      document.getElementById('resultService').textContent = examInfo.service;
+      document.getElementById('resultRole').textContent = examInfo.role;
+      document.getElementById('resultCorrect').textContent = score;
+      
+      // 정답률에 따른 메시지
+      let message = '';
+      if (percentage >= 90) {
+        message = '🎉 완벽합니다! 탁월한 이해도를 보여주셨습니다!';
+      } else if (percentage >= 80) {
+        message = '🌟 훌륭합니다! 매우 잘 준비하셨네요!';
+      } else if (percentage >= 70) {
+        message = '👍 잘하셨습니다! 충분한 이해도를 보여주셨습니다!';
+      } else if (percentage >= 60) {
+        message = '😊 합격입니다! 조금만 더 노력하면 완벽해질 거예요!';
+      } else if (percentage >= 50) {
+        message = '💪 아쉽습니다! 조금만 더 학습하면 좋은 결과가 있을 거예요!';
+      } else if (percentage >= 40) {
+        message = '📚 더 노력이 필요합니다. 정책을 다시 한 번 복습해보세요!';
+      } else {
+        message = '🔥 힘내세요! 정책 학습 후 다시 도전해보세요!';
+      }
+      
+      document.getElementById('resultMessage').textContent = message;
+      
+      const mins = Math.floor(timeSpent / 60);
+      const secs = timeSpent % 60;
+      document.getElementById('resultTime').textContent = 
+        `${mins}분 ${secs}초`;
+    }
+    
+    // ==========================================
+    // 페이지 이탈 방지
+    // ==========================================
+    window.addEventListener('beforeunload', function(e) {
+      if (startTime && !document.getElementById('resultScreen').classList.contains('active')) {
+        e.preventDefault();
+        e.returnValue = '시험이 진행 중입니다. 정말 나가시겠습니까?';
+      }
+    });
+  </script>
+</body>
+</html>

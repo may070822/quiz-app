@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 페이지 - KMCC 퀴즈</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #f5f6fa;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .nav-btn {
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .nav-btn:hover {
+      border-color: #ffb800;
+      transform: translateY(-2px);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .card-title {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #1a2332;
+      font-weight: 600;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #1a2332;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ffb800;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
+    }
+    
+    .prompts-list {
+      margin-top: 30px;
+    }
+    
+    .prompt-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #ffb800;
+    }
+    
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .prompt-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .prompt-meta span {
+      padding: 4px 12px;
+      background: white;
+      border-radius: 15px;
+    }
+    
+    .prompt-content {
+      color: #333;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .success-message.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛠️ 관리자 페이지</h1>
+      <p>문제 출제 방향과 난이도를 설정할 수 있습니다</p>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="/" class="nav-btn">🏠 시험 페이지</a>
+      <a href="/results" class="nav-btn">📊 결과 조회</a>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">📝 커스텀 프롬프트 설정</h2>
+      
+      <div class="success-message" id="successMessage">
+        ✅ 저장되었습니다!
+      </div>
+
+      <div class="form-group">
+        <label>대상 월 *</label>
+        <input type="month" id="month" required>
+      </div>
+
+      <div class="form-group">
+        <label>서비스 *</label>
+        <select id="service" required>
+          <option value="">서비스를 선택하세요</option>
+          <option value="택시">택시</option>
+          <option value="대리">대리</option>
+          <option value="퀵">퀵</option>
+          <option value="바이크">바이크</option>
+          <option value="주차">주차</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>난이도 *</label>
+        <select id="difficulty" required>
+          <option value="초급">초급</option>
+          <option value="중급">중급</option>
+          <option value="고급">고급</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>추가 프롬프트 *</label>
+        <textarea id="customPrompt" placeholder="예시:
+이번 달에는 다음 항목을 집중적으로 출제해주세요:
+- 요금 조정 정책 (신규 도입된 할인 제도)
+- 배차 우선순위 변경사항
+- 고객 응대 시 주의사항
+
+문제 스타일:
+- 실제 상황 기반 시나리오 문제
+- 정책 이해도를 확인할 수 있는 심화 문제" required></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="savePrompt()">💾 저장하기</button>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">📋 저장된 프롬프트</h2>
+      <div class="prompts-list" id="promptsList">
+        <p style="color: #999;">저장된 프롬프트가 없습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 현재 월로 초기화
+    document.getElementById('month').value = new Date().toISOString().slice(0, 7);
+
+    // 저장된 프롬프트 로드
+    async function loadPrompts() {
+      try {
+        const response = await fetch('/api/admin/prompts');
+        const prompts = await response.json();
+        
+        const container = document.getElementById('promptsList');
+        if (prompts.length === 0) {
+          container.innerHTML = '<p style="color: #999;">저장된 프롬프트가 없습니다.</p>';
+          return;
+        }
+
+        container.innerHTML = prompts.map(p => `
+          <div class="prompt-item">
+            <div class="prompt-header">
+              <div class="prompt-meta">
+                <span>📅 ${p.month}</span>
+                <span>📦 ${p.service}</span>
+                <span>📊 ${p.difficulty}</span>
+              </div>
+              <small style="color: #999;">${new Date(p.createdAt).toLocaleDateString('ko-KR')}</small>
+            </div>
+            <div class="prompt-content">${p.customPrompt}</div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('프롬프트 로드 실패:', error);
+      }
+    }
+
+    // 프롬프트 저장
+    async function savePrompt() {
+      const month = document.getElementById('month').value;
+      const service = document.getElementById('service').value;
+      const difficulty = document.getElementById('difficulty').value;
+      const customPrompt = document.getElementById('customPrompt').value;
+
+      if (!month || !service || !difficulty || !customPrompt) {
+        alert('모든 항목을 입력해주세요.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/prompts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            month,
+            service,
+            difficulty,
+            customPrompt
+          })
+        });
+
+        if (response.ok) {
+          document.getElementById('successMessage').classList.add('active');
+          setTimeout(() => {
+            document.getElementById('successMessage').classList.remove('active');
+          }, 3000);
+          
+          document.getElementById('customPrompt').value = '';
+          loadPrompts();
+        } else {
+          alert('저장 실패');
+        }
+      } catch (error) {
+        console.error('저장 실패:', error);
+        alert('저장 중 오류가 발생했습니다.');
+      }
+    }
+
+    // 초기 로드
+    loadPrompts();
+  </script>
+</body>
+</html>
